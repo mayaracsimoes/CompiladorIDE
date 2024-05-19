@@ -146,25 +146,14 @@ public class CompilerIDE extends JFrame {
 
 	private void compilarPrograma() {
 		Lexico lexico = new Lexico();
+		Sintatico sintatico = new Sintatico();
+		Semantico semantico = new Semantico();
 		lexico.setInput(editorTextArea.getText());
 		try {
-			Token t = null;
-			String descricao = adicionarEspacosCondicionais("linha", 7) + adicionarEspacosCondicionais("classe", 20)
-					+ "lexema\n";
-			String tokens = "";
-			while ((t = lexico.nextToken()) != null) {
 
-				String linhas = adicionarEspacosCondicionais(String.valueOf(t.getLinhaToken(editorTextArea.getText())),
-						7);
-				String classes = adicionarEspacosCondicionais(t.getTokenName(), 20);
-				String lexemas = t.getLexeme();
+			sintatico.parse(lexico, semantico); // tradução dirigida pela sintaxe
 
-				tokens = tokens + linhas + classes + lexemas + "\n";
-				System.out.println(tokens);
-			}
-
-			// Exibir o conteúdo formatado na área de texto
-			messagesTextArea.setText(descricao + tokens + "\nPrograma compilado com sucesso!");
+			messagesTextArea.setText("Programa compilado com sucesso!");
 
 		} catch (LexicalError e1) {
 			if (e1.getMessage().equals("Simbolo invalido"))
@@ -174,6 +163,19 @@ public class CompilerIDE extends JFrame {
 				messagesTextArea.setText(
 						"Erro na linha " + e1.getLinhaToken(editorTextArea.getText()) + " - " + e1.getMessage());
 			messagesTextArea.setPreferredSize(new Dimension(500, messagesTextArea.getPreferredSize().height));
+		} catch (SyntaticError e) {
+
+			messagesTextArea.setText("Erro na linha " + e.getLinhaToken(editorTextArea.getText()) + " - "
+					+ e.getToken(editorTextArea.getText()) + " " + e.getMessage());
+			
+			// Trata erros sintáticos
+			// linha sugestão: converter getPosition em linha
+			// símbolo encontrado sugestão: implementar um método getToken no sintatico
+			// mensagem - símbolos esperados, alterar ParserConstants.java, String[]
+			// PARSER_ERROR
+
+		} catch (SemanticError e) {
+			// Trata erros semânticos
 		}
 	}
 
