@@ -165,7 +165,7 @@ public class CompilerIDE extends JFrame {
 			messagesTextArea.setPreferredSize(new Dimension(500, messagesTextArea.getPreferredSize().height));
 		} catch (SyntaticError e) {
 
-			messagesTextArea.setText("Erro na linha " + e.getLinhaToken(editorTextArea.getText()) + " - "
+			messagesTextArea.setText("Erro na linha " + e.getLinhaToken(editorTextArea.getText()) + " - encontrado "
 					+ e.getToken(editorTextArea.getText()) + " " + e.getMessage());
 			
 			// Trata erros sintáticos
