@@ -20,6 +20,10 @@ public class Sintatico implements Constants, ParserConstants {
 	private static final boolean isSemanticAction(int x) {
 		return x >= FIRST_SEMANTIC_ACTION;
 	}
+	
+	public String getToken() {
+		return currentToken.getLexeme();
+	}
 
 	private boolean step() throws LexicalError, SyntaticError, SemanticError {
 		if (currentToken == null) {

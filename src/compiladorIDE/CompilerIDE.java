@@ -18,6 +18,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -48,6 +50,7 @@ public class CompilerIDE extends JFrame {
 	private JLabel statusLabel;
 	private boolean arquivoSalvoAnteriormente = false;
 	private File arquivoAtual;
+	private List<String> codigoObjeto = new ArrayList();
 
 	public class NumberedBorder extends AbstractBorder {
 
@@ -152,9 +155,16 @@ public class CompilerIDE extends JFrame {
 		try {
 
 			sintatico.parse(lexico, semantico); // tradução dirigida pela sintaxe
-
+			codigoObjeto = semantico.getCodigoObjeto();
 			messagesTextArea.setText("Programa compilado com sucesso!");
 
+			for (String linha : codigoObjeto) {
+				System.out.println(linha);
+			}
+
+			// Gerar arquivo .il com o código objeto na mesma pasta do arquivo fonte
+			salvarCodigoObjeto();
+			// System.out.println(codigoObjeto);
 		} catch (LexicalError e1) {
 			if (e1.getMessage().equals("Simbolo invalido"))
 				messagesTextArea.setText("Erro na linha " + e1.getLinhaToken(editorTextArea.getText()) + " - "
@@ -163,19 +173,15 @@ public class CompilerIDE extends JFrame {
 				messagesTextArea.setText(
 						"Erro na linha " + e1.getLinhaToken(editorTextArea.getText()) + " - " + e1.getMessage());
 			messagesTextArea.setPreferredSize(new Dimension(500, messagesTextArea.getPreferredSize().height));
-		} catch (SyntaticError e) {
+		} catch (SyntaticError e2) {
 
-			messagesTextArea.setText("Erro na linha " + e.getLinhaToken(editorTextArea.getText()) + " - encontrado "
-					+ e.getToken(editorTextArea.getText()) + " " + e.getMessage());
-			
-			// Trata erros sintáticos
-			// linha sugestão: converter getPosition em linha
-			// símbolo encontrado sugestão: implementar um método getToken no sintatico
-			// mensagem - símbolos esperados, alterar ParserConstants.java, String[]
-			// PARSER_ERROR
+			messagesTextArea.setText("Erro na linha " + e2.getLinhaToken(editorTextArea.getText()) + " - encontrado "
+					+ sintatico.getToken() + " " + e2.getMessage());
 
-		} catch (SemanticError e) {
-			// Trata erros semânticos
+		} catch (SemanticError e3) {
+
+			messagesTextArea
+					.setText("Erro na linha " + e3.getLinhaToken(editorTextArea.getText()) + " - " + e3.getMessage());
 		}
 	}
 
@@ -193,7 +199,29 @@ public class CompilerIDE extends JFrame {
 		return palavra + espacos;
 	}
 
+	// Método para salvar o código objeto em um arquivo .il
+	private void salvarCodigoObjeto() {
+		if (arquivoAtual != null) {
+			String nomeArquivo = arquivoAtual.getName();
+			String nomeArquivoIL = nomeArquivo.substring(0, nomeArquivo.lastIndexOf('.')) + ".il";
+			File arquivoIL = new File(arquivoAtual.getParent(), nomeArquivoIL);
+
+			try (FileWriter writer = new FileWriter(arquivoIL)) {
+				for (String linha : codigoObjeto) {
+					writer.write(linha + "\n");
+				}
+				messagesTextArea.append("\nArquivo .il gerado: " + arquivoIL.getAbsolutePath());
+			} catch (IOException e) {
+				e.printStackTrace();
+				messagesTextArea.setText("Erro ao salvar o arquivo .il");
+			}
+		} else {
+			messagesTextArea.setText("Salve o arquivo antes de compilar para gerar o .il");
+		}
+	}
+
 	public CompilerIDE() {
+
 		setMinimumSize(new Dimension(900, 600));
 		setTitle("Compiler Interface");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
