@@ -157,14 +157,11 @@ public class CompilerIDE extends JFrame {
 			sintatico.parse(lexico, semantico); // tradução dirigida pela sintaxe
 			codigoObjeto = semantico.getCodigoObjeto();
 			messagesTextArea.setText("Programa compilado com sucesso!");
-
-			for (String linha : codigoObjeto) {
-				System.out.println(linha);
-			}
+			salvarArquivo(arquivoAtual);
 
 			// Gerar arquivo .il com o código objeto na mesma pasta do arquivo fonte
 			salvarCodigoObjeto();
-			// System.out.println(codigoObjeto);
+
 		} catch (LexicalError e1) {
 			if (e1.getMessage().equals("Simbolo invalido"))
 				messagesTextArea.setText("Erro na linha " + e1.getLinhaToken(editorTextArea.getText()) + " - "

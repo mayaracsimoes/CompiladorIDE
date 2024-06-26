@@ -138,7 +138,7 @@ public class Semantico implements Constants {
 
 	private void acao102(Token token) throws SemanticError {
 		String tipo = token.getLexeme();
-		String tipoLocal = tipo.equals("int") || tipo.equals("float") ? tipo + "64" : tipo; // Concatena "64" para int
+		String tipoLocal = tipo.equals("int") || tipo.equals("float") ? tipo + "64" : tipo.equals("str") ? "string":tipo; // Concatena "64" para int
 																							// ou float
 
 		for (String id : listaId) {
@@ -157,7 +157,10 @@ public class Semantico implements Constants {
 
 	private void acao104(Token token) {
 		String valor = token.getLexeme();
+		
+		//	System.err.println(valor);
 		for (String id : listaId) {
+			System.out.println(id);
 			codigoObjeto.add("ldc.i8 " + valor);
 			codigoObjeto.add("stloc " + id);
 			Simbolo simbolo = tabelaSimbolos.get(id);
@@ -197,15 +200,13 @@ public class Semantico implements Constants {
 				throw new SemanticError(id + " não declarado", token.getPosition());
 			} else {
 				String tipo = tabelaSimbolos.get(id).getTipo();
-				if (tipo.equals("int") || tipo.equals("float")) {
-					tipo += "64"; // Concatenar "64" para int ou float
-				}
+				tipo = tipo.equals("int") || tipo.equals("float") ? tipo + "64" : tipo.equals("str") ? "string":tipo; 
 
 				// Adiciona a leitura da linha de entrada
 				codigoObjeto.add("call string [mscorlib]System.Console::ReadLine()");
 
 				// Adiciona a conversão apropriada
-				String readMethod = tipo.equals("int64") ? "int64::Parse"
+				String readMethod = tipo.equals("int64") ? "Int64::Parse"
 						: tipo.equals("float64") ? "Double::Parse" : tipo.equals("bool") ? "bool::Parse" : null;
 
 				if (readMethod != null) {
@@ -223,12 +224,12 @@ public class Semantico implements Constants {
 
 	private void acao108() {
 		String tipo = pilhaTipos.pop();
+		tipo = tipo.equals("int") || tipo.equals("float") ? tipo + "64" : tipo.equals("str") ? "string":tipo; 
 		System.out.println(tipo);
-		// Verificar se o tipo desempilhado é int64
-		if (tipo.equals("int")) {
-			codigoObjeto.add("conv.i8"); // Converter para int64
-		}
-
+// Verificar se o tipo desempilhado é int64
+if (tipo.equals("int64")) {
+	codigoObjeto.add("conv.i8"); // Converter para int64
+}
 		// Gerar código objeto para escrever na saída
 		codigoObjeto.add("call void [mscorlib]System.Console::Write(" + tipo + ")");
 	}
@@ -400,7 +401,6 @@ public class Semantico implements Constants {
 	private void acao124() throws SemanticError {
 		String tipo2 = pilhaTipos.pop();
 		String tipo1 = pilhaTipos.pop();
-		System.out.println("tipos: " + tipo1 + tipo2);
 		// Verificar tipo resultante da operação
 		String tipoResultante = verificarTipoResultado(tipo1, tipo2, "calcular");
 
