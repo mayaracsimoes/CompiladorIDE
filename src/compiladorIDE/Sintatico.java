@@ -22,7 +22,7 @@ public class Sintatico implements Constants, ParserConstants {
 	}
 	
 	public String getToken() {
-		return currentToken.getLexeme();
+		return currentToken.getTokenName();
 	}
 
 	private boolean step() throws LexicalError, SyntaticError, SemanticError {

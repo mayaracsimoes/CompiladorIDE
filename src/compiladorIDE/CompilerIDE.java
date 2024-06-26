@@ -259,6 +259,9 @@ public class CompilerIDE extends JFrame {
 
 				// Limpar o texto da barra de status
 				statusLabel.setText("");
+				
+				arquivoAtual = null;
+				arquivoSalvoAnteriormente = false;
 
 			}
 		});
@@ -326,6 +329,8 @@ public class CompilerIDE extends JFrame {
 
 						// Atualizar a barra de status com o nome do arquivo aberto
 						statusLabel.setText("Arquivo aberto: " + selectedFile.getAbsolutePath());
+						arquivoAtual = selectedFile;
+						arquivoSalvoAnteriormente = true;
 					} catch (IOException ex) {
 						// Tratar exceções de leitura do arquivo
 						ex.printStackTrace();
@@ -571,6 +576,9 @@ public class CompilerIDE extends JFrame {
 
 				// Limpar o texto da barra de status
 				statusLabel.setText("");
+				
+				arquivoAtual = null;
+				arquivoSalvoAnteriormente = false;
 
 				break;
 
@@ -615,6 +623,8 @@ public class CompilerIDE extends JFrame {
 
 						// Atualizar a barra de status com o nome do arquivo aberto
 						statusLabel.setText("Arquivo aberto: " + selectedFile.getAbsolutePath());
+						arquivoAtual = selectedFile;
+						arquivoSalvoAnteriormente = true;
 					} catch (IOException ex) {
 						// Tratar exceções de leitura do arquivo
 						ex.printStackTrace();

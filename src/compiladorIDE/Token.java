@@ -26,6 +26,8 @@ public class Token {
 	public String getTokenName() {
 
 		switch (id) {
+		case Constants.DOLLAR:
+			return "EOF";
 		case Constants.identificador:
 			return "identificador";
 		case Constants.constante_int:
@@ -39,81 +41,81 @@ public class Token {
 		case Constants.constante_str:
 			return "constante_str";
 		case Constants.pr_bin:
-			return "palavra reservada";
+			return "bin";
 		case Constants.pr_bool:
-			return "palavra reservada";
+			return "bool";
 		case Constants.pr_elif:
-			return "palavra reservada";
+			return "elif";
 		case Constants.pr_else:
-			return "palavra reservada";
+			return "else";
 		case Constants.pr_endif:
-			return "palavra reservada";
+			return "endif";
 		case Constants.pr_false:
-			return "palavra reservada";
+			return "false";
 		case Constants.pr_float:
-			return "palavra reservada";
+			return "float";
 		case Constants.pr_hexa:
-			return "palavra reservada";
+			return "hexa";
 		case Constants.pr_if:
-			return "palavra reservada";
+			return "if";
 		case Constants.pr_int:
-			return "palavra reservada";
+			return "int";
 		case Constants.pr_input:
-			return "palavra reservada";
+			return "input";
 		case Constants.pr_main:
-			return "palavra reservada";
+			return "main";
 		case Constants.pr_output:
-			return "palavra reservada";
+			return "output";
 		case Constants.pr_str:
-			return "palavra reservada";
+			return "str";
 		case Constants.pr_toInt:
-			return "palavra reservada";
+			return "toInt";
 		case Constants.pr_toBin:
-			return "palavra reservada";
+			return "toBin";
 		case Constants.pr_toHexa:
-			return "palavra reservada";
+			return "toHexa";
 		case Constants.pr_true:
-			return "palavra reservada";
+			return "true";
 		case Constants.pr_repeat:
-			return "palavra reservada";
+			return "repeat";
 		case Constants.pr_until:
-			return "palavra reservada";
+			return "until";
 		case Constants.TOKEN_28:
-			return "simbolo especial";
+			return ",";
 		case Constants.TOKEN_29:
-			return "simbolo especial";
+			return ".";
 		case Constants.TOKEN_30:
-			return "simbolo especial";
+			return ";";
 		case Constants.TOKEN_31:
-			return "simbolo especial";
+			return "=";
 		case Constants.TOKEN_32:
-			return "simbolo especial";
+			return ":";
 		case Constants.TOKEN_33:
-			return "simbolo especial";
+			return "(";
 		case Constants.TOKEN_34:
-			return "simbolo especial";
+			return ")";
 		case Constants.TOKEN_35:
-			return "simbolo especial";
+			return "&";
 		case Constants.TOKEN_36:
-			return "simbolo especial";
+			return "|";
 		case Constants.TOKEN_37:
-			return "simbolo especial";
+			return "!";
 		case Constants.TOKEN_38:
-			return "simbolo especial";
+			return "==";
 		case Constants.TOKEN_39:
-			return "simbolo especial";
+			return "!=";
 		case Constants.TOKEN_40:
-			return "simbolo especial";
+			return "<";
 		case Constants.TOKEN_41:
-			return "simbolo especial";
+			return ">";
 		case Constants.TOKEN_42:
-			return "simbolo especial";
+			return "+";
 		case Constants.TOKEN_43:
-			return "simbolo especial";
+			return "-";
 		case Constants.TOKEN_44:
-			return "simbolo especial";
+			return "*";
 		case Constants.TOKEN_45:
-			return "simbolo especial";
+			return "/";
 		}
 		return lexeme;
 	}
