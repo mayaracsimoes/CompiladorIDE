@@ -12,7 +12,6 @@ public class Semantico implements Constants {
 	private int contadorRotulos = 0;
 
 	public void executeAction(int action, Token token) throws SemanticError {
-		
 		switch (action) {
 		case 100:
 			acao100();
@@ -138,8 +137,9 @@ public class Semantico implements Constants {
 
 	private void acao102(Token token) throws SemanticError {
 		String tipo = token.getLexeme();
-		String tipoLocal = tipo.equals("int") || tipo.equals("float") ? tipo + "64" : tipo.equals("str") ? "string":tipo; // Concatena "64" para int
-																							// ou float
+		String tipoLocal = tipo.equals("int") || tipo.equals("float") ? tipo + "64"
+				: tipo.equals("str") ? "string" : tipo; // Concatena "64" para int
+		// ou float
 
 		for (String id : listaId) {
 			if (tabelaSimbolos.containsKey(id)) {
@@ -157,8 +157,8 @@ public class Semantico implements Constants {
 
 	private void acao104(Token token) {
 		String valor = token.getLexeme();
-		
-		//	System.err.println(valor);
+
+		// System.err.println(valor);
 		for (String id : listaId) {
 			System.out.println(id);
 			codigoObjeto.add("ldc.i8 " + valor);
@@ -175,6 +175,7 @@ public class Semantico implements Constants {
 
 	private void acao106(Token token) throws SemanticError {
 		String tipoExpressao = pilhaTipos.pop();
+
 		if (tipoExpressao.equals("int64")) {
 			codigoObjeto.add("conv.i8");
 		}
@@ -185,10 +186,22 @@ public class Semantico implements Constants {
 			if (!tabelaSimbolos.containsKey(id)) {
 				throw new SemanticError(id + " não declarado", token.getPosition());
 			} else {
-				codigoObjeto.add("stloc " + id);
 				Simbolo simbolo = tabelaSimbolos.get(id);
+				String tipoSimbolo = simbolo.getTipo();
+
+				// Verificar compatibilidade de tipos
+				if (!tipoSimbolo.equals(tipoExpressao)) {				
+					if (tipoSimbolo.equals("int") && !tipoExpressao.equals("int64")) {
+						// Converter int para int64
+						codigoObjeto.add("conv.i8");
+						pilhaTipos.push("int64");
+					}
+				}
+				
+				codigoObjeto.add("stloc " + id);
 				simbolo.setUsado(true);
 				tabelaSimbolos.put(id, simbolo);
+				
 			}
 		}
 		listaId.clear();
@@ -200,7 +213,7 @@ public class Semantico implements Constants {
 				throw new SemanticError(id + " não declarado", token.getPosition());
 			} else {
 				String tipo = tabelaSimbolos.get(id).getTipo();
-				tipo = tipo.equals("int") || tipo.equals("float") ? tipo + "64" : tipo.equals("str") ? "string":tipo; 
+				tipo = tipo.equals("int") || tipo.equals("float") ? tipo + "64" : tipo.equals("str") ? "string" : tipo;
 
 				// Adiciona a leitura da linha de entrada
 				codigoObjeto.add("call string [mscorlib]System.Console::ReadLine()");
@@ -224,12 +237,12 @@ public class Semantico implements Constants {
 
 	private void acao108() {
 		String tipo = pilhaTipos.pop();
-		tipo = tipo.equals("int") || tipo.equals("float") ? tipo + "64" : tipo.equals("str") ? "string":tipo; 
+		tipo = tipo.equals("int") || tipo.equals("float") ? tipo + "64" : tipo.equals("str") ? "string" : tipo;
 		System.out.println(tipo);
 // Verificar se o tipo desempilhado é int64
-if (tipo.equals("int64")) {
-	codigoObjeto.add("conv.i8"); // Converter para int64
-}
+		if (tipo.equals("int64")|| tipo.equals("int")) {
+			codigoObjeto.add("conv.i8"); // Converter para int64
+		}
 		// Gerar código objeto para escrever na saída
 		codigoObjeto.add("call void [mscorlib]System.Console::Write(" + tipo + ")");
 	}
@@ -455,9 +468,9 @@ if (tipo.equals("int64")) {
 		codigoObjeto.add("ldloc " + lexeme);
 
 		// Verificar se o tipo do identificador é int64 para conversão
-		if (tipo.equals("int")) {
+		if (tipo.equals("int") || tipo.equals("int64")) {
 			codigoObjeto.add("conv.r8"); // Converter para float64 (conv.r8)
-			tipo = "float64"; // Atualizar tipo para float64 na pilha de tipos
+			tipo = "int64"; // Atualizar tipo para float64 na pilha de tipos
 		}
 		if (tipo.equals("float")) {
 			tipo = "float64"; // Atualizar tipo para float64 na pilha de tipos
@@ -533,6 +546,7 @@ if (tipo.equals("int64")) {
 	}
 
 	private String verificarTipoResultado(String operando1, String operando2, String operacao) {
+	
 		// Consultar a tabela de tipos para operações binárias
 		if (operacao.equals("calcular")) {
 			if (operando1.equals("int64") && operando2.equals("int64")) {
